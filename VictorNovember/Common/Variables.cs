@@ -8,17 +8,22 @@ namespace VictorNovember.Common
 {
     public class Variables
     {
-        public static List<string> compliments = new List<string> {
-            {"you're cute"},
-            {"you're so cute"},
-            {"you are so cute" },
-            {"you're a cutie" },
-            {"short and cute" },
-            {"i like you" },
-            {"i love you" },
-            {"marry me" },
-            {"go on a date" },
-            {"best girl" }
+        public static string[] answers = 
+        {
+                "Yes",
+                "No",
+                "Maybe",
+                "dunno",
+                "Yesn't",
+                "Perhaps",
+                "Possibly",
+                "Positively",
+                "Conceivably",
+                "I don't feel like answering right now, try again later",
+                "In your dreams",
+                "You sure you want to know the answer to that?",
+                "*cricket noises*",
+                "W-W-why would you ask that?"
         };
         public static Dictionary<string, string> emotes = new Dictionary<string, string>
         {
@@ -52,6 +57,18 @@ namespace VictorNovember.Common
                 "I could eat a bowl of alphabet soup and shit out a smarter statement than what you just said",
                 "Is your ass jealous of the amount of crap that just came out of your mouth?",
                 "Oh yeah? The jerk store called and they ran out of you."
-            };
+        };
+        public static List<string> compliments = new List<string> {
+            {"you're cute"},
+            {"you're so cute"},
+            {"you are so cute" },
+            {"you're a cutie" },
+            {"short and cute" },
+            {"i like you" },
+            {"i love you" },
+            {"marry me" },
+            {"go on a date" },
+            {"best girl" }
+        };
     }
 }

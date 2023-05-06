@@ -69,9 +69,11 @@ namespace VictorNovember
             slashCommandConfig.RegisterCommands<FunSL>();
             slashCommandConfig.RegisterCommands<GeneralSL>();
             slashCommandConfig.RegisterCommands<SpaceSL>();
+            slashCommandConfig.RegisterCommands<ModerationSL>();
 
-
+            //TODO: handle more errors
             Commands.CommandErrored += EventHelper.OnCommandError;
+            slashCommandConfig.SlashCommandErrored += EventHelper.OnSlashCommandError;
 
             await Client.ConnectAsync();
             await Task.Delay(-1);

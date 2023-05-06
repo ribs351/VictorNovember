@@ -171,12 +171,14 @@
   <ItemGroup>
     <Compile Include="Bot.cs" />
     <Compile Include="Commands\Fun.cs" />
+    <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\Variables.cs" />
     <Compile Include="ConfigJSON.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SlashCommands\FunSL.cs" />
     <Compile Include="SlashCommands\GeneralSL.cs" />
+    <Compile Include="SlashCommands\ModerationSL.cs" />
     <Compile Include="SlashCommands\SpaceSL.cs" />
     <Compile Include="Utilities\APIHandler.cs" />
     <Compile Include="Utilities\EventHelper.cs" />

@@ -11,6 +11,7 @@ using System.Net.Http;
 using DSharpPlus.SlashCommands.Attributes;
 using Newtonsoft.Json;
 using DSharpPlus.Interactivity.Extensions;
+using VictorNovember.Common;
 
 namespace VictorNovember.SlashCommands
 {
@@ -22,6 +23,50 @@ namespace VictorNovember.SlashCommands
         {
             dadJokeAPIkey = Utilities.APIHandler.ReturnSavedValue("dadJokeAPIkey");
         }
+
+        #region Answer
+        [SlashCommand("answer", "Answers a yes no question, much like the magic eightball")]
+        [SlashCooldown(1, 10, SlashCooldownBucketType.Channel)]
+        public async Task Answer(InteractionContext ctx, [Option("string", "Your yes/no question")] string question)
+        {
+            await ctx.DeferAsync();
+            Random random = new Random();
+            string output = "";
+
+            if ((question.IndexOf("?", StringComparison.CurrentCultureIgnoreCase) >= 0) == false)
+            {
+                await Extensions.SendErrorAsync(ctx, "Error!", "That's not a question though? Make a question pls!");
+                return;
+            }
+            switch (question)
+            {
+                case var s when question.Contains("are you retarded"):
+                    output += "You're retarded";
+                    await Extensions.SendSuccessAsync(ctx, question, output);
+                    break;
+                case var s when question.Contains("are you gay"):
+                    output += "You are gay";
+                    await Extensions.SendSuccessAsync(ctx, question, output);
+                    break;
+                case var s when question.Contains("how are you"):
+                    output += "Fine til I met you, I guess";
+                    await Extensions.SendSuccessAsync(ctx, question, output);
+                    break;
+                case var s when question.Contains("who are you"):
+                    output += "Who are you? Why are you asking me this?";
+                    await Extensions.SendSuccessAsync(ctx, question, output);
+                    break;
+                case var s when question.Contains("definition of insanity"):
+                    output += "Mentioning one Far Cry game, over and over again";
+                    await Extensions.SendSuccessAsync(ctx, question, output);
+                    break;
+                default: output = Variables.answers[random.Next(0, Variables.answers.Length)];
+                    await Extensions.SendSuccessAsync(ctx, question, output);
+                    break;
+            }
+            
+        }
+        #endregion
 
         #region Say
         [SlashCommand("say", "Get November to say something")]
@@ -95,6 +140,7 @@ namespace VictorNovember.SlashCommands
 
         #region RockPaperScissors
         [SlashCommand("rps", "Play a game of rock paper scissors with November")]
+        [SlashCooldown(1, 10, SlashCooldownBucketType.Channel)]
         public async Task RockPaperScissors(InteractionContext ctx, [Choice("Rock", "rock")][Choice("Paper", "paper")][Choice("Scissors", "scissors")][Option("string", "Choose your weapon")] string playerChoice)
         {
             await ctx.Channel.TriggerTypingAsync();
@@ -202,7 +248,7 @@ namespace VictorNovember.SlashCommands
 
         #region PP
         [SlashCommand("pp", "Get November to measure your pp")]
-        [Cooldown(1, 5, CooldownBucketType.User)]
+        [SlashCooldown(1, 10, SlashCooldownBucketType.Channel)]
         public async Task PP(InteractionContext ctx)
         {
 
@@ -251,7 +297,7 @@ namespace VictorNovember.SlashCommands
 
         #region RR
         [SlashCommand("rr", "Play a game of Russian Roulette")]
-        [Cooldown(1, 10, CooldownBucketType.Channel)]
+        [SlashCooldown(1, 10, SlashCooldownBucketType.Channel)]
         public async Task RussianRoulette(InteractionContext ctx, [Choice("One", 1)][Choice("Two", 2)][Choice("Three", 3)][Choice("Four", 4)][Choice("Five", 5)][Choice("Six", 6)][Option("double", "Decide how many bullets you want to play with")] double amount)
         {
             //Lets the user choose how many bullets they want to load
@@ -311,7 +357,7 @@ namespace VictorNovember.SlashCommands
 
         #region HRR
         [SlashCommand("hrr", "Play a game of hardcore Russian Roulette, if you die you will be kicked from the server!")]
-        [Cooldown(1, 10, CooldownBucketType.Channel)]
+        [SlashCooldown(1, 10, SlashCooldownBucketType.Channel)]
         public async Task HardcoreRussianRoulette(InteractionContext ctx, [Choice("One", 1)][Choice("Two", 2)][Choice("Three", 3)][Choice("Four", 4)][Choice("Five", 5)][Choice("Six", 6)][Option("double", "Decide how many bullets you want to play with")] double amount)
         {
             //the same has RR but instead of getting timed out they just get kicked lol
@@ -366,91 +412,91 @@ namespace VictorNovember.SlashCommands
         #endregion
 
         #region HiddenPoll
-        [SlashCommand("poll", "Create your own poll")]
-        [Hidden]
-        public async Task PollCommand(InteractionContext ctx, [Option("question", "The main poll subject/question")] string Question,
-                                                             [Option("timelimit", "The time set on this poll")] long TimeLimit,
-                                                             [Option("option1", "Option 1")] string Option1,
-                                                             [Option("option2", "Option 1")] string Option2,
-                                                             [Option("option3", "Option 1")] string Option3,
-                                                             [Option("option4", "Option 1")] string Option4)
-        {
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder()
-                                                                                .WithContent("..."));
+        //[SlashCommand("poll", "Create your own poll")]
+        //[Hidden]
+        //public async Task PollCommand(InteractionContext ctx, [Option("question", "The main poll subject/question")] string Question,
+        //                                                     [Option("timelimit", "The time set on this poll")] long TimeLimit,
+        //                                                     [Option("option1", "Option 1")] string Option1,
+        //                                                     [Option("option2", "Option 1")] string Option2,
+        //                                                     [Option("option3", "Option 1")] string Option3,
+        //                                                     [Option("option4", "Option 1")] string Option4)
+        //{
+        //    await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder()
+        //                                                                        .WithContent("..."));
 
-            var interactvity = ctx.Client.GetInteractivity(); //Getting the Interactivity Module
-            TimeSpan timer = TimeSpan.FromSeconds(TimeLimit); //Converting my time parameter to a timespan variable
+        //    var interactvity = ctx.Client.GetInteractivity(); //Getting the Interactivity Module
+        //    TimeSpan timer = TimeSpan.FromSeconds(TimeLimit); //Converting my time parameter to a timespan variable
 
-            DiscordEmoji[] optionEmojis = { DiscordEmoji.FromName(ctx.Client, ":one:", false),
-                                            DiscordEmoji.FromName(ctx.Client, ":two:", false),
-                                            DiscordEmoji.FromName(ctx.Client, ":three:", false),
-                                            DiscordEmoji.FromName(ctx.Client, ":four:", false) }; //Array to store discord emojis
+        //    DiscordEmoji[] optionEmojis = { DiscordEmoji.FromName(ctx.Client, ":one:", false),
+        //                                    DiscordEmoji.FromName(ctx.Client, ":two:", false),
+        //                                    DiscordEmoji.FromName(ctx.Client, ":three:", false),
+        //                                    DiscordEmoji.FromName(ctx.Client, ":four:", false) }; //Array to store discord emojis
 
-            string optionsString = optionEmojis[0] + " | " + Option1 + "\n" +
-                                   optionEmojis[1] + " | " + Option2 + "\n" +
-                                   optionEmojis[2] + " | " + Option3 + "\n" +
-                                   optionEmojis[3] + " | " + Option4; //String to display each option with its associated emojis
+        //    string optionsString = optionEmojis[0] + " | " + Option1 + "\n" +
+        //                           optionEmojis[1] + " | " + Option2 + "\n" +
+        //                           optionEmojis[2] + " | " + Option3 + "\n" +
+        //                           optionEmojis[3] + " | " + Option4; //String to display each option with its associated emojis
 
-            var pollMessage = new DiscordMessageBuilder()
-                .AddEmbed(new DiscordEmbedBuilder()
+        //    var pollMessage = new DiscordMessageBuilder()
+        //        .AddEmbed(new DiscordEmbedBuilder()
 
-                .WithColor(DiscordColor.Azure)
-                .WithTitle(string.Join(" ", Question))
-                .WithDescription(optionsString)
-                ); //Making the Poll message
+        //        .WithColor(DiscordColor.Azure)
+        //        .WithTitle(string.Join(" ", Question))
+        //        .WithDescription(optionsString)
+        //        ); //Making the Poll message
 
-            var putReactOn = await ctx.Channel.SendMessageAsync(pollMessage); //Storing the await command in a variable
+        //    var putReactOn = await ctx.Channel.SendMessageAsync(pollMessage); //Storing the await command in a variable
 
-            foreach (var emoji in optionEmojis)
-            {
-                await putReactOn.CreateReactionAsync(emoji); //Adding each emoji from the array as a reaction on this message
-            }
+        //    foreach (var emoji in optionEmojis)
+        //    {
+        //        await putReactOn.CreateReactionAsync(emoji); //Adding each emoji from the array as a reaction on this message
+        //    }
 
-            var result = await interactvity.CollectReactionsAsync(putReactOn, timer); //Collects all the emoji's and how many peopele reacted to those emojis
+        //    var result = await interactvity.CollectReactionsAsync(putReactOn, timer); //Collects all the emoji's and how many peopele reacted to those emojis
 
-            int count1 = 0; //Counts for each emoji
-            int count2 = 0;
-            int count3 = 0;
-            int count4 = 0;
+        //    int count1 = 0; //Counts for each emoji
+        //    int count2 = 0;
+        //    int count3 = 0;
+        //    int count4 = 0;
 
-            foreach (var emoji in result) //Foreach loop to go through all the emojis in the message and filtering out the 4 emojis we need
-            {
-                if (emoji.Emoji == optionEmojis[0])
-                {
-                    count1++;
-                }
-                if (emoji.Emoji == optionEmojis[1])
-                {
-                    count2++;
-                }
-                if (emoji.Emoji == optionEmojis[2])
-                {
-                    count3++;
-                }
-                if (emoji.Emoji == optionEmojis[3])
-                {
-                    count4++;
-                }
-            }
+        //    foreach (var emoji in result) //Foreach loop to go through all the emojis in the message and filtering out the 4 emojis we need
+        //    {
+        //        if (emoji.Emoji == optionEmojis[0])
+        //        {
+        //            count1++;
+        //        }
+        //        if (emoji.Emoji == optionEmojis[1])
+        //        {
+        //            count2++;
+        //        }
+        //        if (emoji.Emoji == optionEmojis[2])
+        //        {
+        //            count3++;
+        //        }
+        //        if (emoji.Emoji == optionEmojis[3])
+        //        {
+        //            count4++;
+        //        }
+        //    }
 
-            int totalVotes = count1 + count2 + count3 + count4;
+        //    int totalVotes = count1 + count2 + count3 + count4;
 
-            string resultsString = optionEmojis[0] + ": " + count1 + " Votes \n" +
-                       optionEmojis[1] + ": " + count2 + " Votes \n" +
-                       optionEmojis[2] + ": " + count3 + " Votes \n" +
-                       optionEmojis[3] + ": " + count4 + " Votes \n\n" +
-                       "The total number of votes is " + totalVotes; //String to show the results of the poll
+        //    string resultsString = optionEmojis[0] + ": " + count1 + " Votes \n" +
+        //               optionEmojis[1] + ": " + count2 + " Votes \n" +
+        //               optionEmojis[2] + ": " + count3 + " Votes \n" +
+        //               optionEmojis[3] + ": " + count4 + " Votes \n\n" +
+        //               "The total number of votes is " + totalVotes; //String to show the results of the poll
 
-            var resultsMessage = new DiscordMessageBuilder()
-                .AddEmbed(new DiscordEmbedBuilder()
+        //    var resultsMessage = new DiscordMessageBuilder()
+        //        .AddEmbed(new DiscordEmbedBuilder()
 
-                .WithColor(DiscordColor.Green)
-                .WithTitle("Results of Poll")
-                .WithDescription(resultsString)
-                );
+        //        .WithColor(DiscordColor.Green)
+        //        .WithTitle("Results of Poll")
+        //        .WithDescription(resultsString)
+        //        );
 
-            await ctx.Channel.SendMessageAsync(resultsMessage); //Making the embed and sending it off            
-        }
+        //    await ctx.Channel.SendMessageAsync(resultsMessage); //Making the embed and sending it off            
+        //}
         #endregion
 
         #region Caption
@@ -463,7 +509,7 @@ namespace VictorNovember.SlashCommands
             var captionMessage = new DiscordMessageBuilder()
                 .AddEmbed(new DiscordEmbedBuilder()
                     .WithColor(DiscordColor.Azure)
-                    .WithFooter(caption)
+                    .WithTitle(caption)
                     .WithImageUrl(picture.Url)
                     );
 
@@ -473,7 +519,7 @@ namespace VictorNovember.SlashCommands
 
         #region Neko
         [SlashCommand("neko", "Rate a random image of a neko")]
-        [Cooldown(1, 10, CooldownBucketType.Channel)]
+        [SlashCooldown(1, 10, SlashCooldownBucketType.Channel)]
         public async Task Neko(InteractionContext ctx)
         {
             await ctx.DeferAsync();

@@ -122,12 +122,17 @@ namespace VictorNovember.Utilities
                 }
             }
 
-            foreach (KeyValuePair<string, string> replacement in Variables.emotes)
+            foreach (KeyValuePair<string, string> emote in Variables.emotes)
             {
-                if (message.Contains(replacement.Key) && (!args.Channel.IsPrivate) && (!args.Author.IsBot))
+                if (message.Contains(emote.Key) && (!args.Channel.IsPrivate) && (!args.Author.IsBot))
                 {
+                    if (emote.Key == "kekw" && message.IndexOf("kekwshook") != -1)
+                    {
+                        // Skip replacing "kekw" if "kekwshook" is also present
+                        continue;
+                    }
                     await args.Channel.TriggerTypingAsync();
-                    await args.Channel.SendMessageAsync($"{args.Author.Username}: {replacement.Value}");
+                    await args.Channel.SendMessageAsync($"{args.Author.Username}: {emote.Value}");
                     return;
                 }
             }
@@ -171,7 +176,6 @@ namespace VictorNovember.Utilities
                );
             await args.Guild.SystemChannel.SendMessageAsync(embedMessage);
         }
-
         internal static async Task OnCommandError(CommandsNextExtension sender, CommandErrorEventArgs e)
         {
             if (e.Exception is ChecksFailedException)
@@ -190,6 +194,30 @@ namespace VictorNovember.Utilities
                     .WithTitle("Error")
                     .WithDescription($"Please wait {cooldownTimer} seconds before using that command again!")
                     .WithColor(DiscordColor.Azure)
+                );
+                await e.Context.Channel.SendMessageAsync(cooldownMessage);
+            }
+        }
+
+        internal static async Task OnSlashCommandError(SlashCommandsExtension sender, SlashCommandErrorEventArgs e)
+        {
+            if (e.Exception is SlashExecutionChecksFailedException)
+            {
+                var castedExpection = e.Exception as SlashExecutionChecksFailedException
+;
+                string cooldownTimer = string.Empty;
+
+                foreach (SlashCheckBaseAttribute check in castedExpection.FailedChecks)
+                {
+                    var cooldown = check as SlashCooldownAttribute;
+                    TimeSpan timeLeft = cooldown.GetRemainingCooldown(e.Context);
+                    cooldownTimer = timeLeft.ToString(@"hh\:mm\:ss");
+                }
+                var cooldownMessage = new DiscordMessageBuilder()
+                    .AddEmbed(new DiscordEmbedBuilder()
+                    .WithTitle("Error")
+                    .WithDescription($"Please wait {cooldownTimer} seconds before using that command again!")
+                    .WithColor(DiscordColor.Red)
                 );
                 await e.Context.Channel.SendMessageAsync(cooldownMessage);
             }

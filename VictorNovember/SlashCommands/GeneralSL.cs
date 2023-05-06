@@ -292,9 +292,9 @@ namespace VictorNovember.SlashCommands
                         Name = "DALL·E",
                         IconUrl = "https://openailabs-site.azureedge.net/public-assets/d/1a1d80e550/apple-touch-icon.png"
                     },
-                    Title = $"Results for: {query}",
                     ImageUrl = result.Data[0].Url,
                     Color = DiscordColor.Azure,
+                    Description = $"> {query}",
                     Footer = new DiscordEmbedBuilder.EmbedFooter
                     {
                         Text = $"DALL·E | Requested by {ctx.User.Username}#{ctx.User.Discriminator}",
@@ -307,6 +307,33 @@ namespace VictorNovember.SlashCommands
             {
                 await ctx.Channel.SendMessageAsync($"Something went wrong:```fix\n{e.ToString()}```");
             }
+        }
+        #endregion
+
+        #region GetOut
+        [SlashCommand("getout", "Makes Novemeber leave the current server.")]
+        [RequireUserPermissions(Permissions.Administrator)]
+        public async Task LeaveServer(InteractionContext ctx)
+        {
+            var embedMessage = new DiscordEmbedBuilder()
+            {
+                Author = new DiscordEmbedBuilder.EmbedAuthor
+                {
+                    Name = ctx.Client.CurrentUser.Username,
+                    IconUrl = ctx.Client.CurrentUser.AvatarUrl
+                },
+                Title = "Goodbye!",
+                Description = $"Thank you for using {ctx.Client.CurrentUser.Username}. Have a nice day!",
+                Color = DiscordColor.Azure,
+                Footer = new DiscordEmbedBuilder.EmbedFooter
+                {
+                    Text = $"GetOut | Requested by {ctx.User.Username}#{ctx.User.Discriminator}",
+                    IconUrl = ctx.User.AvatarUrl
+                }
+            };
+
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
+            await ctx.Guild.LeaveAsync().ConfigureAwait(false);
         }
         #endregion
     }
