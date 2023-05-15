@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VictorNovember.Common;
+using VictorNovember.Utilities;
 
 namespace VictorNovember.SlashCommands
 {
@@ -17,9 +18,14 @@ namespace VictorNovember.SlashCommands
         public async Task Kick(InteractionContext ctx, [Option("user", "The user to kick")] DiscordUser user, [Option("reason", "Reason for the kick.")] string reason = null)
         {
             await ctx.DeferAsync();
+            var embedMessage = new EmbedCreator(null, null, DiscordColor.Red).GenerateEmbed()
+                         .WithAuthor(ctx.Client.CurrentUser.Username, null, ctx.Client.CurrentUser.AvatarUrl);
+
             if (ctx.Channel.IsPrivate)
             {
-                await Extensions.SendErrorAsync(ctx, "Error!", "This command can only be used in a server!");
+                embedMessage.WithTitle("Error!")
+                            .WithDescription("This command can only be used in a server!");
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                 return;
             }
             var member = (user as DiscordMember);
@@ -27,25 +33,38 @@ namespace VictorNovember.SlashCommands
             {
                 if (ctx.Client.CurrentUser.Id == user.Id)
                 {
-                    await Extensions.SendErrorAsync(ctx, "Error!", "Kick me yourself, coward!");
+                    embedMessage.WithTitle("Error!")
+                                .WithDescription("Kick me yourself, coward!");
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     return;
                 }
                 if (ctx.Member.Id == user.Id)
                 {
-                    await Extensions.SendErrorAsync(ctx, "Error!", "You cannot kick yourself!");
+                    embedMessage.WithTitle("Error!")
+                                .WithDescription("You cannot kick yourself!");
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     return;
                 }
                 if (member.Hierarchy > ctx.Guild.CurrentMember.Hierarchy)
                 {
-                    await Extensions.SendErrorAsync(ctx, "Error!", "That user has a higher position than the mine!");
+                    embedMessage.WithTitle("Error!")
+                                .WithDescription("That user has a higher position than mine!");
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     return;
                 }
                 await member.RemoveAsync(reason);
-                await Extensions.SendSuccessAsync(ctx, "Kicked!", $"{member.Mention} was kicked from the server!");
+
+                embedMessage.WithTitle("Kicked!")
+                            .WithDescription($"{member.Mention} was kicked from the server!")
+                            .WithColor(DiscordColor.Green);
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
             }
             else
             {
-                await Extensions.SendErrorAsync(ctx, "Access Denined!", "You don't have the permission to execute this command!");
+                embedMessage.WithTitle("Access Denined!")
+                            .WithDescription("You don't have the permission to execute this command!");
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
+                return;
             }
         }
         #endregion
@@ -55,9 +74,14 @@ namespace VictorNovember.SlashCommands
         public async Task Ban(InteractionContext ctx, [Option("user", "The user to ban")] DiscordUser user, [Option("reason", "Reason for the ban.")] string reason = null, [Option("delete_message_days", "How many days worth of message to delete.")] double day = 0)
         {
             await ctx.DeferAsync();
+            var embedMessage = new EmbedCreator(null, null, DiscordColor.Red).GenerateEmbed()
+                         .WithAuthor(ctx.Client.CurrentUser.Username, null, ctx.Client.CurrentUser.AvatarUrl);
+
             if (ctx.Channel.IsPrivate)
             {
-                await Extensions.SendErrorAsync(ctx, "Error!", "This command can only be used in a server!");
+                embedMessage.WithTitle("Error!")
+                            .WithDescription("This command can only be used in a server!");
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                 return;
             }
             var member = (user as DiscordMember);
@@ -65,25 +89,38 @@ namespace VictorNovember.SlashCommands
             {
                 if (ctx.Client.CurrentUser.Id == user.Id)
                 {
-                    await Extensions.SendErrorAsync(ctx, "Error!", "Ban me yourself, coward!");
+                    embedMessage.WithTitle("Error!")
+                                .WithDescription("Ban me yourself, coward!");
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     return;
                 }
                 if (ctx.Member.Id == user.Id)
                 {
-                    await Extensions.SendErrorAsync(ctx, "Error!", "You cannot ban yourself!");
+                    embedMessage.WithTitle("Error!")
+                                .WithDescription("You cannot ban yourself!");
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     return;
                 }
                 if (member.Hierarchy > ctx.Guild.CurrentMember.Hierarchy)
                 {
-                    await Extensions.SendErrorAsync(ctx, "Error!", "That user has a higher position than the mine!");
+                    embedMessage.WithTitle("Error!")
+                                .WithDescription("That user has a higher position than mine!");
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     return;
                 }
                 await member.BanAsync(Convert.ToInt32(day), reason);
-                await Extensions.SendSuccessAsync(ctx, "Banned!", $"{member.Mention} was banned from the server!");
+
+                embedMessage.WithTitle("Kicked!")
+                            .WithDescription($"{member.Mention} was banned from the server!")
+                            .WithColor(DiscordColor.Green);
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
             }
             else
             {
-                await Extensions.SendErrorAsync(ctx, "Access Denined!", "You don't have the permission to execute this command!");
+                embedMessage.WithTitle("Access Denined!")
+                            .WithDescription("You don't have the permission to execute this command!");
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
+                return;
             }
         }
         #endregion
@@ -93,9 +130,14 @@ namespace VictorNovember.SlashCommands
         public async Task Timeout(InteractionContext ctx, [Option("user", "The user to silence")] DiscordUser user, [Option("duration", "Duration of the timeout in seconds")] long duration = 120)
         {
             await ctx.DeferAsync();
+            var embedMessage = new EmbedCreator(null, null, DiscordColor.Red).GenerateEmbed()
+                         .WithAuthor(ctx.Client.CurrentUser.Username, null, ctx.Client.CurrentUser.AvatarUrl);
+
             if (ctx.Channel.IsPrivate)
             {
-                await Extensions.SendErrorAsync(ctx, "Error!", "This command can only be used in a server!");
+                embedMessage.WithTitle("Error!")
+                            .WithDescription("This command can only be used in a server!");
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                 return;
             }
             var member = (user as DiscordMember);
@@ -104,27 +146,77 @@ namespace VictorNovember.SlashCommands
             {
                 if (ctx.Client.CurrentUser.Id == user.Id)
                 {
-                    await Extensions.SendErrorAsync(ctx, "Error!", "I will not be silenced!");
+                    embedMessage.WithTitle("Error!")
+                                .WithDescription("I will not be silenced!");
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     return;
                 }
                 if (ctx.Member.Id == user.Id)
                 {
-                    await Extensions.SendErrorAsync(ctx, "Error!", "You cannot mute yourself!");
+                    embedMessage.WithTitle("Error!")
+                                .WithDescription("You cannot mute yourself!");
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     return;
                 }
                 if (member.Hierarchy > ctx.Guild.CurrentMember.Hierarchy)
                 {
-                    await Extensions.SendErrorAsync(ctx, "Error!", "That user has a higher position than the mine!");
+                    embedMessage.WithTitle("Error!")
+                                .WithDescription("That user has a higher position than mine!");
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     return;
                 }
                 await member.TimeoutAsync(timeDuration);
-                await Extensions.SendSuccessAsync(ctx, $"{member.Mention} has been timed out!", $"Duration: {TimeSpan.FromSeconds(duration).ToString()}");
+
+                embedMessage.WithTitle($"{member.Mention} has been timed out!")
+                            .WithDescription($"Duration: {TimeSpan.FromSeconds(duration).ToString()}")
+                            .WithColor(DiscordColor.Green);
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
             }
             else
             {
-                await Extensions.SendErrorAsync(ctx, "Access Denined!", "You don't have the permission to execute this command!");
+                embedMessage.WithTitle("Access Denined!")
+                            .WithDescription("You don't have the permission to execute this command!");
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
+                return;
             }
         }
+        #endregion
+
+        #region Slow Mode
+        [SlashCommand("slowmode", "Sets a channel's slowmode interval to a user's desired ammount")]
+        public async Task SlowMode(InteractionContext ctx, [Option("interval", "Sets the slowmode's interval.")] long interval)
+        {
+            await ctx.DeferAsync();
+            var embedMessage = new EmbedCreator(null, null, DiscordColor.Red).GenerateEmbed()
+                         .WithAuthor(ctx.Client.CurrentUser.Username, null, ctx.Client.CurrentUser.AvatarUrl);
+
+            if (ctx.Channel.IsPrivate)
+            {
+                embedMessage.WithTitle("Error!")
+                            .WithDescription("This command can only be used in a server!");
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
+                return;
+            }
+            if (ctx.Member.Permissions.HasPermission(Permissions.ManageChannels))
+            {
+                await ctx.Channel.ModifyAsync(x => x.PerUserRateLimit = Convert.ToInt32(interval));
+                embedMessage.WithTitle("Slowmode")
+                            .WithDescription($"Channel's slowmode interval has been adjusted to {interval} seconds!")
+                            .WithColor(DiscordColor.Green);
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
+                return;
+
+            }
+            else
+            {
+                embedMessage.WithTitle("Access Denined!")
+                            .WithDescription("You don't have the permission to execute this command!");
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
+                return;
+            }
+
+        }
+
         #endregion
     }
 }

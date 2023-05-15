@@ -12,6 +12,7 @@ using DSharpPlus.SlashCommands.Attributes;
 using Newtonsoft.Json;
 using DSharpPlus.Interactivity.Extensions;
 using VictorNovember.Common;
+using VictorNovember.Utilities;
 
 namespace VictorNovember.SlashCommands
 {
@@ -32,36 +33,48 @@ namespace VictorNovember.SlashCommands
             await ctx.DeferAsync();
             Random random = new Random();
             string output = "";
-
+            var embedMessage = new EmbedCreator(null, null, DiscordColor.Green).GenerateEmbed()
+                         .WithAuthor(ctx.Client.CurrentUser.Username, null, ctx.Client.CurrentUser.AvatarUrl);
             if ((question.IndexOf("?", StringComparison.CurrentCultureIgnoreCase) >= 0) == false)
             {
-                await Extensions.SendErrorAsync(ctx, "Error!", "That's not a question though? Make a question pls!");
+                embedMessage.WithTitle("Error!")
+                            .WithDescription("That's not a question though? Make a question please!")
+                            .WithColor(DiscordColor.Red);
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                 return;
             }
             switch (question)
             {
+                
+
                 case var s when question.Contains("are you retarded"):
                     output += "You're retarded";
-                    await Extensions.SendSuccessAsync(ctx, question, output);
+                    embedMessage.WithTitle(question).WithDescription(output);
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     break;
                 case var s when question.Contains("are you gay"):
                     output += "You are gay";
-                    await Extensions.SendSuccessAsync(ctx, question, output);
+                    embedMessage.WithTitle(question).WithDescription(output);
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     break;
                 case var s when question.Contains("how are you"):
                     output += "Fine til I met you, I guess";
-                    await Extensions.SendSuccessAsync(ctx, question, output);
+                    embedMessage.WithTitle(question).WithDescription(output);
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     break;
                 case var s when question.Contains("who are you"):
                     output += "Who are you? Why are you asking me this?";
-                    await Extensions.SendSuccessAsync(ctx, question, output);
+                    embedMessage.WithTitle(question).WithDescription(output);
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     break;
                 case var s when question.Contains("definition of insanity"):
                     output += "Mentioning one Far Cry game, over and over again";
-                    await Extensions.SendSuccessAsync(ctx, question, output);
+                    embedMessage.WithTitle(question).WithDescription(output);
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     break;
                 default: output = Variables.answers[random.Next(0, Variables.answers.Length)];
-                    await Extensions.SendSuccessAsync(ctx, question, output);
+                    embedMessage.WithTitle(question).WithDescription(output);
+                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
                     break;
             }
             
@@ -127,12 +140,8 @@ namespace VictorNovember.SlashCommands
             var body = await response.Content.ReadAsStringAsync();
             var joke = JsonConvert.DeserializeObject<dynamic>(body);
             //gets the first element of the json's body element, kept forgetting about this lol
-            var embedMessage = new DiscordEmbedBuilder()
-            {
-                Title = joke.body[0].setup.ToString(),
-                Description = joke.body[0].punchline.ToString(),
-                Color = DiscordColor.Azure
-            };
+
+            var embedMessage = new EmbedCreator(joke.body[0].setup.ToString(), joke.body[0].punchline.ToString(), DiscordColor.Azure).GenerateEmbed();
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
 
         }
@@ -148,7 +157,7 @@ namespace VictorNovember.SlashCommands
 
 
             string[] novemberOptions = new string[3] { "rock", "paper", "scissors" };
-            int rnd = new Random().Next(1, 4);
+            int rnd = new Random().Next(0, 3);
             string novemberChoice = novemberOptions[rnd];
 
             string[] winnerResponses = new string[]{
@@ -161,85 +170,38 @@ namespace VictorNovember.SlashCommands
                             "Dammit!",
                             "One more go, I'll get it next time!"
                         };
-
-            //display the user choice
-
-            var playerChoiceMessage = new DiscordEmbedBuilder()
-            {
-                Title = "You went with:",
-                Author = new DiscordEmbedBuilder.EmbedAuthor
-                {
-                    IconUrl = ctx.User.AvatarUrl,
-                    Name = ctx.User.Username
-                },
-                Description = $"```{playerChoice}```",
-                Color = DiscordColor.Azure,
-            };
-
+            // display the user choice
+            var playerChoiceMessage = new EmbedCreator("You went with:", $"```{playerChoice}```", DiscordColor.Azure).GenerateEmbed()
+                .WithAuthor(ctx.User.Username, null, ctx.User.AvatarUrl);
+            
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(playerChoiceMessage));
 
-            var novemberChoiceMessage = new DiscordEmbedBuilder()
-            {
-                Title = "I picked:",
-                Author = new DiscordEmbedBuilder.EmbedAuthor
-                {
-                    IconUrl = ctx.Client.CurrentUser.AvatarUrl,
-                    Name = ctx.Client.CurrentUser.Username
-                },
-                Description = $"```{novemberChoice}```",
-                Color = DiscordColor.Azure,
-            };
-
-
+            // display the bot choice
+            var novemberChoiceMessage = new EmbedCreator("I picked:", $"```{novemberChoice}```", DiscordColor.Azure).GenerateEmbed()
+                .WithAuthor(ctx.Client.CurrentUser.Username, null, ctx.Client.CurrentUser.AvatarUrl);
+            
             await ctx.Channel.SendMessageAsync(embed: novemberChoiceMessage);
 
             //game logic be like
             if (playerChoice == novemberChoice)
             {
-                var drawMessage = new DiscordEmbedBuilder()
-                {
-                    Title = "Draw!",
-                    Author = new DiscordEmbedBuilder.EmbedAuthor
-                    {
-                        IconUrl = ctx.Client.CurrentUser.AvatarUrl,
-                        Name = ctx.Client.CurrentUser.Username
-                    },
-                    Description = "Draw! There were no winners!",
-                    Color = DiscordColor.Yellow,
-                };
-
+                var drawMessage = new EmbedCreator("Draw!", "Draw! There are no winners!", DiscordColor.Yellow).GenerateEmbed()
+                    .WithAuthor(ctx.Client.CurrentUser.Username, null, ctx.Client.CurrentUser.AvatarUrl);
+                
                 await ctx.Channel.SendMessageAsync(embed: drawMessage);
             }
             else if (playerChoice == "rock" && novemberChoice == "paper" || playerChoice == "scissors" && novemberChoice == "rock" || playerChoice == "paper" && novemberChoice == "scissors")
             {
-                var novemberWonMessage = new DiscordEmbedBuilder()
-                {
-                    Title = "You've lost!",
-                    Author = new DiscordEmbedBuilder.EmbedAuthor
-                    {
-                        IconUrl = ctx.Client.CurrentUser.AvatarUrl,
-                        Name = ctx.Client.CurrentUser.Username
-                    },
-                    Description = $"{winnerResponses[rnd]}",
-                    Color = DiscordColor.Red,
-                };
-
+                var novemberWonMessage = new EmbedCreator("You've lost!", $"{winnerResponses[rnd]}", DiscordColor.Red).GenerateEmbed()
+                    .WithAuthor(ctx.Client.CurrentUser.Username, null, ctx.Client.CurrentUser.AvatarUrl);
+                
                 await ctx.Channel.SendMessageAsync(embed: novemberWonMessage);
             }
             else
             {
-                var playerWonMessage = new DiscordEmbedBuilder()
-                {
-                    Title = "You won!",
-                    Author = new DiscordEmbedBuilder.EmbedAuthor
-                    {
-                        IconUrl = ctx.Client.CurrentUser.AvatarUrl,
-                        Name = ctx.Client.CurrentUser.Username
-                    },
-                    Description = $"{loserResponses[rnd]}",
-                    Color = DiscordColor.Green,
-                };
-
+                var playerWonMessage = new EmbedCreator("You won!", $"{loserResponses[rnd]}", DiscordColor.Green).GenerateEmbed()
+                    .WithAuthor(ctx.Client.CurrentUser.Username, null, ctx.Client.CurrentUser.AvatarUrl);
+                
                 await ctx.Channel.SendMessageAsync(embed: playerWonMessage);
             }
 
@@ -256,19 +218,9 @@ namespace VictorNovember.SlashCommands
 
             if (ctx.User.Id == 502023592083718145)
             {
-                var embedNegevMessage = new DiscordEmbedBuilder()
-                {
-                    Title = "Error!",
-                    Description = "PP not found!",
-                    Color = DiscordColor.Azure,
-                    Footer = new DiscordEmbedBuilder.EmbedFooter
-                    {
-                        IconUrl = ctx.User.AvatarUrl,
-                        Text = $"PP | Requested by {ctx.User.Username}"
-                    }
-                };
+                var embedNegevMessage = new EmbedCreator("A Title", "A Description", DiscordColor.Azure).GenerateEmbed()
+                    .WithFooter($"PP | Requested by {ctx.User.Username}#{ctx.User.Discriminator}", ctx.User.AvatarUrl);
                 await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedNegevMessage));
-
                 return;
             }
 

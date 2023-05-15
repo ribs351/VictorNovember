@@ -10,6 +10,7 @@ namespace VictorNovember.Common
 {
     public static class Extensions
     {
+        // Experimented with extention methods, these work but I didn't like how they turned out, so currently these methods are unused
         public static async Task<DiscordMessage> SendSuccessAsync(InteractionContext ctx, string title, string description)
         {
             var embedMessage = new DiscordEmbedBuilder()
@@ -37,6 +38,17 @@ namespace VictorNovember.Common
                 Color = DiscordColor.Red
             };
             return await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
+        }
+        public static async Task<DiscordEmbed> CreateBasicEmbed(string title, string description, DiscordColor color)
+        {
+            var embed = await Task.Run(() => new DiscordEmbedBuilder()
+                .WithTitle(title)
+                .WithTitle(title)
+                .WithDescription(description)
+                .WithColor(color)
+                .WithTimestamp(DateTime.Now)
+                .Build());
+            return embed;
         }
     }
 }

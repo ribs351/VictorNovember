@@ -86,6 +86,28 @@ namespace VictorNovember.Utilities
                         await e.Interaction.CreateResponseAsync(InteractionResponseType.UpdateMessage, new DiscordInteractionResponseBuilder().AddEmbed(funCommandList));
                     }
                     break;
+                case "moderationBtn":
+                    {
+                        string spaceList = "kick -> Kick a user\n"
+                                         + "ban -> Ban a user\n"
+                                         + "timeout -> Silence a user, default duration is 2 minutes\n"
+                                         + "slowmode -> Sets a channel's slowmode interval to a user's desired ammount\n";
+
+                        var spaceCommandList = new DiscordEmbedBuilder()
+                        {
+                            Title = "General Command List",
+                            Description = $"```fix\n{spaceList}```",
+                            Color = DiscordColor.Azure,
+                            Footer = new DiscordEmbedBuilder.EmbedFooter
+                            {
+                                Text = $"Help | Requested by {e.User.Username}#{e.User.Discriminator}",
+                                IconUrl = e.User.AvatarUrl
+                            }
+                        };
+
+                        await e.Interaction.CreateResponseAsync(InteractionResponseType.UpdateMessage, new DiscordInteractionResponseBuilder().AddEmbed(spaceCommandList));
+                    }
+                    break;
                 case "spaceBtn":
                     {
                         string spaceList = "apod -> Returns a Picture of the Day from NASA\n";
@@ -129,6 +151,16 @@ namespace VictorNovember.Utilities
                     if (emote.Key == "kekw" && message.IndexOf("kekwshook") != -1)
                     {
                         // Skip replacing "kekw" if "kekwshook" is also present
+                        continue;
+                    }
+                    if (emote.Key == "kekw" && message.IndexOf("kekwwut") != -1)
+                    {
+                        // Skip replacing "kekw" if "kekwwut" is also present
+                        continue;
+                    }
+                    if (emote.Key == "kekw" && message.IndexOf("kekwthink") != -1)
+                    {
+                        // Skip replacing "kekw" if "kekwthink" is also present
                         continue;
                     }
                     await args.Channel.TriggerTypingAsync();

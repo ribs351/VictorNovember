@@ -32,7 +32,12 @@ namespace VictorNovember.Common
             {"kekwshook","<:kekwshook:965242519132717086>"},
             {"antimori", "<:antimori:997236942993379388>"},
             {"doubt", "<:doubt:790853671586889751>"},
-            {"ripbozo", "<:Ripbozo:962833922323013672>"}
+            {"ripbozo", "<:Ripbozo:962833922323013672>"},
+            {"kekwwut", "<a:kekwwut:967597323683254292>"},
+            {"kekwthink", "<:kekwthink:1054837412901167175>"},
+            {"dread", "<:dread:1055090498525732993>"},
+            {"plsdont", "<:plsdont:928099176460455936>"},
+            {"peepowtf", "<:peepowtf:1058049116732661810>"}
         };
 
         public static Random randomRepliesToCompliments = new Random();

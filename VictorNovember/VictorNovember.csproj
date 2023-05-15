@@ -181,6 +181,7 @@
     <Compile Include="SlashCommands\ModerationSL.cs" />
     <Compile Include="SlashCommands\SpaceSL.cs" />
     <Compile Include="Utilities\APIHandler.cs" />
+    <Compile Include="Utilities\EmbedHelper.cs" />
     <Compile Include="Utilities\EventHelper.cs" />
   </ItemGroup>
   <ItemGroup>

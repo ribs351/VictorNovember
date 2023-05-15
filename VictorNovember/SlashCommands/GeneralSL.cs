@@ -11,6 +11,7 @@ using DSharpPlus.SlashCommands.Attributes;
 using System.Diagnostics;
 using System.Net.Http;
 using OpenAI_API;
+using VictorNovember.Utilities;
 
 namespace VictorNovember.SlashCommands
 {
@@ -52,27 +53,14 @@ namespace VictorNovember.SlashCommands
 
             var funBtn = new DiscordButtonComponent(ButtonStyle.Success, "funBtn", "Fun");
             var generalBtn = new DiscordButtonComponent(ButtonStyle.Success, "generalBtn", "General");
+            var moderationBtn = new DiscordButtonComponent(ButtonStyle.Success, "moderationBtn", "Moderation");
             var spaceBtn = new DiscordButtonComponent(ButtonStyle.Success, "spaceBtn", "Space");
 
-            var helpEmbed = new DiscordEmbedBuilder()
-            {
-                Title = $"Help Menu",
-                Author = new DiscordEmbedBuilder.EmbedAuthor
-                {
-                    IconUrl = ctx.Client.CurrentUser.AvatarUrl,
-                    Name = ctx.Client.CurrentUser.Username
-                },
-                Description = "Select a button for more information on the commands",
-                Color = DiscordColor.Azure,
-                Footer = new DiscordEmbedBuilder.EmbedFooter
-                {
-                    Text = $"Help | Requested by {ctx.User.Username}#{ctx.User.Discriminator}",
-                    IconUrl = ctx.User.AvatarUrl
-                }
-            };
 
-
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(helpEmbed).AddComponents(generalBtn, funBtn, spaceBtn));
+            var myEmbed = new EmbedCreator("Help Menu", "Select a button for more information on the commands", DiscordColor.Azure).GenerateEmbed();
+            var helpEmbed = myEmbed.WithThumbnail(ctx.Client.CurrentUser.AvatarUrl)
+                                   .WithFooter($"Help | Requested by {ctx.User.Username}#{ctx.User.Discriminator}", ctx.User.AvatarUrl);   
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(helpEmbed).AddComponents(generalBtn, funBtn, moderationBtn,spaceBtn));
         }
         #endregion
 
