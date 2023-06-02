@@ -49,7 +49,7 @@ namespace VictorNovember
             Client.Ready += EventHelper.OnClientReady;
             Client.GuildCreated += EventHelper.OnGuildCreated;
             Client.MessageCreated += EventHelper.OnMessageCreated;
-            Client.ComponentInteractionCreated += EventHelper.ButtonPressResponse;
+            Client.ComponentInteractionCreated += ButtonsHelper.ButtonPressResponse;
 
             var commandsConfig = new CommandsNextConfiguration()
             {

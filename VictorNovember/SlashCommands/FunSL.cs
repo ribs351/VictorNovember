@@ -363,6 +363,114 @@ namespace VictorNovember.SlashCommands
         }
         #endregion
 
+        #region Duel
+        [SlashCommand("duel", "Play a 1v1 russian roulette duel against November.")]
+        [SlashCooldown(1, 10, SlashCooldownBucketType.Channel)]
+        public async Task Duel(InteractionContext ctx, [Choice("One", 1)][Choice("Two", 2)][Choice("Three", 3)][Choice("Four", 4)][Choice("Five", 5)][Choice("Six", 6)][Option("double", "Decide how many bullets you want to play with")] double amount)
+        {
+            await ctx.DeferAsync();
+            if (ctx.Channel.IsPrivate)
+            {
+                await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("This command can only be used in a server, where the stakes are present."));
+                return;
+            }
+
+            var death = (amount / 6) * 100;
+            var playerSpin = new Random().Next(100);
+            var novemberSpin = new Random().Next(100);
+            var timeDuration = DateTime.Now + TimeSpan.FromMinutes(2);
+            var user = (ctx.User as DiscordMember);
+
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Game on! You can go first."));
+            var playerSpinMessage = await ctx.Channel.SendMessageAsync($"{ctx.User.Username} loads {amount.ToString()} bullet(s) and spins the cylinder...");
+            await Task.Delay(1500);
+            await playerSpinMessage.ModifyAsync(x =>
+            {
+                x.Content = $"{ctx.User.Username} puts the gun up to their head and pulls the trigger...";
+            });
+            if (playerSpin < death)
+            {
+                await ctx.Channel.TriggerTypingAsync();
+                await playerSpinMessage.ModifyAsync(x =>
+                {
+                    x.Content = "BANG!";
+                });
+                await Task.Delay(500);
+
+                if (user.Hierarchy > ctx.Guild.CurrentMember.Hierarchy)
+                {
+                    await playerSpinMessage.ModifyAsync(x =>
+                    {
+                        x.Content = $"The gun fired! But it bounced off of {ctx.User.Username}'s head! Their skull is just too thick";
+                    });
+                    await ctx.Channel.SendMessageAsync("I still won the duel lmao <:Ripbozo:962833922323013672>");
+                    return;
+                }
+                else
+                {
+                    await user.TimeoutAsync(timeDuration);
+                    var DMChannel = await ctx.Member.CreateDmChannelAsync();
+                    await DMChannel.SendMessageAsync($"You've been muted in {ctx.Guild.Name} for 2 minutes. You've lost to me in a Russian Roulette duel. Try again if you dare.");
+                    await playerSpinMessage.ModifyAsync(x =>
+                    {
+                        x.Content = $"The chamber was loaded! {ctx.User.Username} shot themself in the head!";
+                    });
+                    await ctx.Channel.SendMessageAsync("I won the duel lmao <:Ripbozo:962833922323013672>");
+                    return;
+                }
+            }
+            else
+            {
+                await Task.Delay(1000);
+                await playerSpinMessage.ModifyAsync(x =>
+                {
+                    x.Content = "*clicks*";
+                });
+                await Task.Delay(500);
+                await playerSpinMessage.ModifyAsync(x =>
+                {
+                    x.Content = $"The chamber was empty! {ctx.User.Username} has survived!";
+                });
+            }
+            await ctx.Channel.SendMessageAsync("My turn.");
+            var novemberSpinMessage = await ctx.Channel.SendMessageAsync("I took the gun from your hand and spin the cylinder");
+            await Task.Delay(1500);
+            await novemberSpinMessage.ModifyAsync(x =>
+            {
+                x.Content = "brb pulling the trigger...";
+            });
+            if (novemberSpin < death)
+            {
+                await ctx.Channel.TriggerTypingAsync();
+                await novemberSpinMessage.ModifyAsync(x =>
+                {
+                    x.Content = "BANG!";
+                });
+                await Task.Delay(500);
+                await novemberSpinMessage.ModifyAsync(x =>
+                {
+                    x.Content = "That hurts! The chamber was loaded! Good thing I can't die.";
+                });
+                await ctx.Channel.SendMessageAsync("Bah, looks like you won the duel!");
+                return;
+            }
+            else 
+            {
+                await Task.Delay(1000);
+                await novemberSpinMessage.ModifyAsync(x =>
+                {
+                    x.Content = "*clicks*";
+                });
+                await Task.Delay(500);
+                await novemberSpinMessage.ModifyAsync(x =>
+                {
+                    x.Content = $"Phew! The chamber was empty!";
+                });
+                await ctx.Channel.SendMessageAsync("Looks like there's no winners this time, care to try again?");
+            }
+        }
+        #endregion
+
         #region HiddenPoll
         //[SlashCommand("poll", "Create your own poll")]
         //[Hidden]

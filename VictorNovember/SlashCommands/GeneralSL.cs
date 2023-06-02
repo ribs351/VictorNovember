@@ -170,15 +170,15 @@ namespace VictorNovember.SlashCommands
             };
             if (ctx.Channel.IsPrivate)
             {
-                embedMessage.AddField("***User ID***", $"```{ctx.User.Id}```", true)
-                            .AddField("***Created at***", $"```{ctx.User.CreationTimestamp.ToString("dd/mm/yyyy")}```", true);
+                embedMessage.AddField("***User ID***", $"```{user.Id}```", true)
+                            .AddField("***Created at***", $"```{user.CreationTimestamp.ToString("dd/mm/yyyy")}```", true);
             }
             else
             {
-                embedMessage.AddField("***User ID***", $"```{ctx.User.Id}```", true)
-                            .AddField("***Created at***", $"```{ctx.User.CreationTimestamp.ToString("dd/mm/yyyy")}```", true)
-                            .AddField("***Join date***", $"```{(ctx.User as DiscordMember).JoinedAt.ToString("dd/mm/yyyy")}```", true)
-                            .AddField("***Roles***", string.Join(" ", (ctx.User as DiscordMember).Roles.Select(x => x.Mention)), true);
+                embedMessage.AddField("***User ID***", $"```{user.Id}```", true)
+                            .AddField("***Created at***", $"```{user.CreationTimestamp.ToString("dd/mm/yyyy")}```", true)
+                            .AddField("***Join date***", $"```{(user as DiscordMember).JoinedAt.ToString("dd/mm/yyyy")}```", true)
+                            .AddField("***Roles***", string.Join(" ", (user as DiscordMember).Roles.Select(x => x.Mention)), true);
             }
 
 
